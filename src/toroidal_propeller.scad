@@ -27,7 +27,8 @@ module toroidal_propeller(
                         );
                         
                         // Substract what is inside other blades
-                        rotate([0,0,-360/blades])
+                        cw_ccw_mult = blade_twist > 0 ? -1 : 1;
+                        rotate([0,0, cw_ccw_mult * 360/blades])
                             linear_extrude(height=height, twist=blade_twist)
                                 translate([blade_length/2,0,0])
                                     resize([blade_length, blade_width]) circle(d=blade_length);
