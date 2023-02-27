@@ -42,13 +42,14 @@ This defines a propeller:
 toroidal_propeller(
     blades = 3,                 // number of blades
     height = 5,                 // height
-    blade_length = 50,          // blade length
-    blade_width = 50,           // blade width
+    blade_length = 63,          // blade length
+    blade_width = 39,           // blade width
     blade_thickness = 4,        // blade thickness
-    blade_hole_offset = 1.2,    // blade hole offset
-    blade_twist = 30,           // blade twist angle
-    hub_d = 15,                 // hub diameter
-    hub_screw_d = 5             // hub screw diameter
+    blade_hole_offset = 1.4,    // blade hole offset
+    blade_twist = 25,           // blade twist angle
+    blade_offset = 0,           // blade distance from propeller axis
+    hub_d = 16,                 // hub diameter
+    hub_screw_d = 5.2           // hub screw diameter
 );
 ```
 
@@ -60,6 +61,7 @@ toroidal_propeller(
 - `blade_thickness` blade thickness. Be aware of your printer capabilities.
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
 - `blade_twist`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
+- `blade_offset`: blade distance from propeller axis
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
 
