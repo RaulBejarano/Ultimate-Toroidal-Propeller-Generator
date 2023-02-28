@@ -7,6 +7,7 @@ module toroidal_propeller(
     blade_hole_offset = 1.4,    // blade hole offset
     blade_twist = 25,           // blade twist angle
     blade_offset = 0,           // blade distance from propeller axis
+    safe_blades_direction = 1,  // indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
     hub_d = 16,                 // hub diameter
     hub_screw_d = 5.2           // hub screw diameter
 ){
@@ -29,7 +30,7 @@ module toroidal_propeller(
                             );
                         
                         // Substract what is inside other blades
-                        cw_ccw_mult = blade_twist > 0 ? -1 : 1;
+                        cw_ccw_mult = (blade_twist > 0 ? -1 : 1) * safe_blades_direction;
                         rotate([0,0, cw_ccw_mult * 360/blades])
                             translate([blade_offset,0,0])
                                 linear_extrude(height=height, twist=blade_twist)
