@@ -1,6 +1,6 @@
 # Ultimate Toroidal Propeller Generator
 
-![version](https://badgen.net/badge/version/v1.1.1?icon=github)
+![version](https://badgen.net/badge/version/v1.2.0?icon=github)
 ![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)
 ![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)
 
@@ -13,10 +13,10 @@ The Ultimate Toroidal Propeller Generator is an open source project that provide
 
 
 ## :sparkles: Features
-| ![](./img/multiblade.PNG)  | ![](./img/intersections.PNG)  | ![](./img/configurable.PNG)  |
-|---|---|---|
-|  Multi-blade  |  Safe blades intersections  | Highly configurable  |
-|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one  |  Create the blade that you need in a simple way  |
+| ![](./img/multiblade.PNG)  | ![](./img/intersections.PNG) | ![](./img/safe.PNG) | ![](./img/configurable.PNG)  |
+|---|---|---|---|
+|  Multi-blade  |  Safe blades intersections  | Safe blade direction | Highly configurable  |
+|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one  | Customize what to do when one blade gets into another | Create the blade that you need in a simple way  |
 
 
 ## :muscle: Getting started
@@ -40,16 +40,17 @@ This defines a propeller:
 > :warning: Use milimeters
 ```
 toroidal_propeller(
-    blades = 3,                 // number of blades
-    height = 5,                 // height
-    blade_length = 63,          // blade length
-    blade_width = 39,           // blade width
-    blade_thickness = 4,        // blade thickness
-    blade_hole_offset = 1.4,    // blade hole offset
-    blade_twist = 25,           // blade twist angle
-    blade_offset = 0,           // blade distance from propeller axis
-    hub_d = 16,                 // hub diameter
-    hub_screw_d = 5.2           // hub screw diameter
+    blades = 3,                     // number of blades
+    height = 6,                     // height
+    blade_length = 68,              // blade length
+    blade_width = 42,               // blade width
+    blade_thickness = 4,            // blade thickne,    // blade hole offset
+    blade_hole_offset = 1.4,        // blade hole offset
+    blade_twist = 15,               // blade twist angle
+    blade_offset = -6,              // blade distance from propeller axis
+    safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
+    hub_d = 16,                     // hub diameter
+    hub_screw_d = 5.5               // hub screw diameter
 );
 ```
 
@@ -62,6 +63,7 @@ toroidal_propeller(
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
 - `blade_twist`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
+- `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
 
