@@ -13,10 +13,10 @@ The Ultimate Toroidal Propeller Generator is an open source project that provide
 
 
 ## :sparkles: Features
-| ![](./img/multiblade.PNG)  | ![](./img/intersections.PNG)  | ![](./img/configurable.PNG)  |
-|---|---|---|
-|  Multi-blade  |  Safe blades intersections  | Highly configurable  |
-|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one  |  Create the blade that you need in a simple way  |
+| ![](./img/multiblade.PNG)  | ![](./img/intersections.PNG) | ![](./img/safe.PNG) | ![](./img/configurable.PNG)  |
+|---|---|---|---|
+|  Multi-blade  |  Safe blades intersections  | Safe blade direction | Highly configurable  |
+|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one  | Customize what to do when one blade gets into another | Create the blade that you need in a simple way  |
 
 
 ## :muscle: Getting started
@@ -48,6 +48,7 @@ toroidal_propeller(
     blade_hole_offset = 1.4,    // blade hole offset
     blade_twist = 25,           // blade twist angle
     blade_offset = 0,           // blade distance from propeller axis
+    safe_blades_direction = 1,  // indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
     hub_d = 16,                 // hub diameter
     hub_screw_d = 5.2           // hub screw diameter
 );
@@ -62,6 +63,7 @@ toroidal_propeller(
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
 - `blade_twist`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
+- `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
 
