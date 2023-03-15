@@ -1,3 +1,5 @@
+eps=1/128;
+
 module toroidal_propeller(
     blades = 3,                     // number of blades
     height = 6,                     // height
@@ -32,29 +34,29 @@ module toroidal_propeller(
                         // Substract what is inside other blades
                         cw_ccw_mult = (blade_twist > 0 ? -1 : 1) * (safe_blades_direction == "PREV" ? 1 : -1);
                         rotate([0,0, cw_ccw_mult * 360/blades])
-                            translate([blade_offset,0,0])
-                                linear_extrude(height=height, twist=blade_twist)
+                            translate([blade_offset,0,-eps/2])
+                                linear_extrude(height=height+eps, twist=blade_twist)
                                     translate([blade_length/2,0,0])
-                                        resize([blade_length, blade_width]) circle(d=blade_length);
+                                        scale([1, (blade_width-16*eps)/(blade_length-16*eps)]) circle(d=blade_length-16*eps);
                     }
                 }
             }
         }
         
         // Hub hole
-        cylinder(h=height,d=hub_screw_d);
+        translate([0,0,-eps/2])
+            cylinder(h=height+eps,d=hub_screw_d);
     }
 }
 
 
 module blade(height, length, width, thickness, offset, twist){
-    difference(){
-        linear_extrude(height=height, twist=twist)
+    linear_extrude(height=height, twist=twist, convexity=2)
+        difference(){
             translate([length/2,0,0])
-                resize([length, width]) circle(d=length);
+                scale([1, width/length]) circle(d=length);
     
-        linear_extrude(height=height, twist=twist)
             translate([length/2 + offset,0,0])
-                resize([length-thickness, width-thickness]) circle(d=length);
+                scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
     }
 }
