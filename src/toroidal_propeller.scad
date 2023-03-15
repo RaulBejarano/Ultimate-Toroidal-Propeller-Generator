@@ -35,7 +35,7 @@ module toroidal_propeller(
                             translate([blade_offset,0,0])
                                 linear_extrude(height=height, twist=blade_twist)
                                     translate([blade_length/2,0,0])
-                                        resize([blade_length, blade_width]) circle(d=blade_length);
+                                        scale([1, blade_width/blade_length]) circle(d=blade_length);
                     }
                 }
             }
@@ -51,10 +51,10 @@ module blade(height, length, width, thickness, offset, twist){
     difference(){
         linear_extrude(height=height, twist=twist)
             translate([length/2,0,0])
-                resize([length, width]) circle(d=length);
+                scale([1, width/length]) circle(d=length);
     
         linear_extrude(height=height, twist=twist)
             translate([length/2 + offset,0,0])
-                resize([length-thickness, width-thickness]) circle(d=length);
+                scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
     }
 }
