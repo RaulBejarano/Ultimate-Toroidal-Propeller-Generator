@@ -48,12 +48,11 @@ module toroidal_propeller(
 
 
 module blade(height, length, width, thickness, offset, twist){
-    difference(){
-        linear_extrude(height=height, twist=twist)
+    linear_extrude(height=height, twist=twist, convexity=2)
+        difference(){
             translate([length/2,0,0])
                 scale([1, width/length]) circle(d=length);
     
-        linear_extrude(height=height, twist=twist)
             translate([length/2 + offset,0,0])
                 scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
     }
