@@ -49,7 +49,7 @@ module toroidal_propeller(
         translate([0,0,-eps/2])
             cylinder(h=height+eps,d=hub_screw_d);
         translate([0,0,-eps/2])
-            cylinder(h=nose+eps,d=nose_dia);            
+            cylinder(h=shaft_face+eps,d=shaft_dia);            
     }
 }
 
