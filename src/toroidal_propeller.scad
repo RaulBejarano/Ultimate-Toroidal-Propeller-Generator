@@ -11,7 +11,9 @@ module toroidal_propeller(
     blade_offset = -6,               // blade distance from propeller axis
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
     hub_d = 16,                     // hub diameter
-    hub_screw_d = 5.5               // hub screw diameter
+    hub_screw_d = 5.5,              // hub screw diameter
+    shaft_face = 2,                 // thickness of "face" of recess in "slip-over" propeller
+    shaft_dia = 12                  // diameter of recess in "slip-over" propeller
 ){
     difference(){
         union(){
@@ -46,6 +48,8 @@ module toroidal_propeller(
         // Hub hole
         translate([0,0,-eps/2])
             cylinder(h=height+eps,d=hub_screw_d);
+        translate([0,0,-eps/2])
+            cylinder(h=nose+eps,d=nose_dia);            
     }
 }
 
