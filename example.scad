@@ -6,7 +6,7 @@ toroidal_propeller(
     height = 6,                     // height
     blade_length = 68,              // blade length
     blade_width = 42,               // blade width
-    blade_thickness = 4,            // blade thickne,    // blade hole offset
+    blade_thickness = 4,            // blade thickness
     blade_hole_offset = 1.4,        // blade hole offset
     blade_twist = 15,               // blade twist angle
     blade_offset = -6,              // blade distance from propeller axis
