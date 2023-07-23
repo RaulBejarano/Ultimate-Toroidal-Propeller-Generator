@@ -1,4 +1,5 @@
 eps=1/128;
+$fn = 100;
 
 module toroidal_propeller(
     blades = 3,                     // number of blades
