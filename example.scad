@@ -12,5 +12,7 @@ toroidal_propeller(
     blade_offset = -6,              // blade distance from propeller axis
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
     hub_d = 16,                     // hub diameter
-    hub_screw_d = 5.5               // hub screw diameter
+    hub_screw_d = 5.5,              // hub screw diameter
+    eh_l = 0,                       // length of the emptying of the hub
+    eh_d = 0                        // diameter of the hollowing of the hub
 );
