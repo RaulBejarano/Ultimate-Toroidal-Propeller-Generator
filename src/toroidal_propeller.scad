@@ -1,7 +1,7 @@
 eps=1/128;
 
 module toroidal_propeller(
-    $fn = 100,                      // how polligonall you want the model
+    $fn = 100,                      // how polligonall you want the model 
     blades = 3,                     // number of blades
     height = 6,                     // height
     blade_length = 68,              // blade length in mm
