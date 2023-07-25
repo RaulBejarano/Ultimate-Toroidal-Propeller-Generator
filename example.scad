@@ -1,7 +1,7 @@
 use <src/toroidal_propeller.scad>
 
-$fn = 100;
 toroidal_propeller(
+    $fn = 100,                      // how polligonall you want the model
     blades = 3,                     // number of blades | Default(3)
     height = 6,                     // height | Default(6)
     blade_length = 68,              // blade length | Default(68)
