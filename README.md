@@ -1,6 +1,6 @@
 # Ultimate Toroidal Propeller Generator
 
-![version](https://badgen.net/badge/version/v1.2.2?icon=github)
+![version](https://badgen.net/badge/version/v1.3.2?icon=github)
 ![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)
 ![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)
 
