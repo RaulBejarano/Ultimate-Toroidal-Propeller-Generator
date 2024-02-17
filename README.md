@@ -46,7 +46,7 @@ toroidal_propeller(
     blade_width = 42,               // blade width | Default(42)
     blade_thickness = 4,            // blade thickness | Default(4)
     blade_hole_offset = 1.4,        // blade hole offset | Default(1.4)
-    blade_twist = 15,               // blade twist angle | Default(15)
+    blade_attack_angle = 35,        // blade attack angle | Default(35)
     blade_offset = -6,              // blade distance from propeller axis | Default(-6)
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
     hub_d = 16,                     // hub diameter | Default(16)
@@ -63,7 +63,7 @@ toroidal_propeller(
 - `blade_width`: blade width
 - `blade_thickness` blade thickness. Be aware of your printer capabilities.
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
-- `blade_twist`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
+- `blade_attack_angle`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
 - `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
 - `hub_d`: hub or holder diameter.
