@@ -13,6 +13,6 @@ toroidal_propeller(
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
     hub_d = 16,                     // hub diameter | Default(16)
     hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
-    eh_l = 0,                       // length of the emptying of the hub | Default(0 = [No support])
-    eh_d = 0                        // diameter of the hollowing of the hub | Default(0 = [No support])
+    hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
+    hub_notch_diameter = 0          // diameter for the notch | Default(0 = [No support])
 );

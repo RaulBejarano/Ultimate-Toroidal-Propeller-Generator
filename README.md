@@ -51,8 +51,8 @@ toroidal_propeller(
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
     hub_d = 16,                     // hub diameter | Default(16)
     hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
-    eh_l = 0,                       // length of the emptying of the hub | Default(0 = [No support])
-    eh_d = 0                        // diameter of the hollowing of the hub | Default(0 = [No support])
+    hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
+    hub_notch_diameter = 0          // diameter for the notch | Default(0 = [No support])
 );
 ```
 
@@ -68,8 +68,8 @@ toroidal_propeller(
 - `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
-- `eh_l`: support hole length.
-- `eh_d`: support hole diameter.
+- `hub_notch_height`: support hole height.
+- `hub_notch_diameter`: support hole diameter.
 
 That's all! Render it with this values with OpenSCAD and you will get something similar to this:
 
