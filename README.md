@@ -49,6 +49,7 @@ toroidal_propeller(
     blade_attack_angle = 35,        // blade attack angle | Default(35)
     blade_offset = -6,              // blade distance from propeller axis | Default(-6)
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
+    hub_height = 6,                 // Hub height | Default(6)
     hub_d = 16,                     // hub diameter | Default(16)
     hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
     hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
@@ -66,6 +67,7 @@ toroidal_propeller(
 - `blade_attack_angle`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
 - `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
+- `hub_height`: hub or holder height.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
 - `hub_notch_height`: support hole height.
