@@ -1,6 +1,6 @@
 # Ultimate Toroidal Propeller Generator
 
-![version](https://badgen.net/badge/version/v1.3.2?icon=github)
+![release](https://badgen.net/github/release/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?icon=github)
 ![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)
 ![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)
 
@@ -46,13 +46,14 @@ toroidal_propeller(
     blade_width = 42,               // blade width | Default(42)
     blade_thickness = 4,            // blade thickness | Default(4)
     blade_hole_offset = 1.4,        // blade hole offset | Default(1.4)
-    blade_twist = 15,               // blade twist angle | Default(15)
+    blade_attack_angle = 35,        // blade attack angle | Default(35)
     blade_offset = -6,              // blade distance from propeller axis | Default(-6)
     safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
+    hub_height = 6,                 // Hub height | Default(6)
     hub_d = 16,                     // hub diameter | Default(16)
     hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
-    eh_l = 0,                       // length of the emptying of the hub | Default(0 = [No support])
-    eh_d = 0                        // diameter of the hollowing of the hub | Default(0 = [No support])
+    hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
+    hub_notch_diameter = 0          // diameter for the notch | Default(0 = [No support])
 );
 ```
 
@@ -63,13 +64,14 @@ toroidal_propeller(
 - `blade_width`: blade width
 - `blade_thickness` blade thickness. Be aware of your printer capabilities.
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
-- `blade_twist`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
+- `blade_attack_angle`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
 - `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
+- `hub_height`: hub or holder height.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
-- `eh_l`: support hole length.
-- `eh_d`: support hole diameter.
+- `hub_notch_height`: support hole height.
+- `hub_notch_diameter`: support hole diameter.
 
 That's all! Render it with this values with OpenSCAD and you will get something similar to this:
 
