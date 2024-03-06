@@ -10,72 +10,75 @@ module toroidal_propeller(
     blade_hole_offset = 1.4,        // blade hole offset
     blade_attack_angle = 35,        // blade attack angle
     blade_offset = -6,              // blade distance from propeller axis
-    safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
+    blade_safe_direction = "PREV",  // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
     hub_height = 6,                 // Hub height
     hub_d = 16,                     // hub diameter
     hub_screw_d = 5.5,              // hub screw diameter
     hub_notch_height = 0,           // height for the notch 
-    hub_notch_diameter = 0          // diameter for the notch
+    hub_notch_d = 0                 // diameter for the notch
 ){
+    l = height / tan(blade_attack_angle);
+    p = 2 * PI * blade_length/2;
+
     difference(){
         union(){
-            // Hub
-            cylinder(h=hub_height,d=hub_d);
-            // Propellers
-            for(a=[0:blades-1]){
-                rotate([0,0,a*(360/blades)]){
-                    difference(){
-                        translate([blade_offset,0,0])
-                            blade(
-                                height = height,
-                                length = blade_length,
-                                width = blade_width,
-                                thickness = blade_thickness,
-                                offset = blade_hole_offset,
-                                attack_angle = blade_attack_angle
-                            );
-                        
-                        // Substract what is inside other blades
-
-                        l = height / tan(blade_attack_angle);
-                        p = 2 * PI * blade_length / 2;
-
-                        twist = l/p  * 360;
-
-                        cw_ccw_mult = (twist > 0 ? -1 : 1) * (safe_blades_direction == "PREV" ? 1 : -1);
-                        rotate([0,0, cw_ccw_mult * 360/blades])
-                            translate([blade_offset,0,-eps/2])
-                                linear_extrude(height=height+eps, twist=twist)
-                                    translate([blade_length/2,0,0])
-                                        scale([1, (blade_width-16*eps)/(blade_length-16*eps)]) circle(d=blade_length-16*eps);
-                    }
-                }
+            linear_extrude(height=height, twist=l/p  * 360, convexity=2){
+                blades2D(
+                    n = blades,
+                    height = height,
+                    length = blade_length,
+                    width = blade_width,
+                    thickness = blade_thickness,
+                    hole_offset = blade_hole_offset,
+                    blade_direction = blade_attack_angle > 0 ? 1 : -1,
+                    offset = blade_offset,
+                    blade_safe_direction = 
+                        blade_safe_direction == "PREV"? 1 : 
+                        blade_safe_direction == "NEXT"? -1: 
+                        0 // default
+                );
             }
+
+            cylinder(d = hub_d, h = hub_height);
         }
-        
-        // Hub hole
-        translate([0,0,-eps/2])
-            cylinder(h=hub_height+eps, d=hub_screw_d);
-
-        // Empty hub
-        translate([0,0,-eps/2])
-            cylinder(h=hub_notch_height+eps, d=hub_notch_diameter);
+        translate([0,0,-eps]){
+            cylinder(d = hub_screw_d, h = hub_height + 2*eps);
+            cylinder(d = hub_notch_d, h = hub_notch_height + eps);
+        }
     }
 }
 
-
-module blade(height, length, width, thickness, offset, attack_angle){
-
-    l = height / tan(attack_angle);
-    p = 2 * PI * length/2;
-
-    linear_extrude(height=height, twist=l/p  * 360, convexity=2)
+module blades2D(n, height, length, width, thickness, hole_offset, blade_direction, offset, blade_safe_direction){
+    for(a=[0:n-1]){
         difference(){
-            translate([length/2,0,0])
-                scale([1, width/length]) circle(d=length);
-    
-            translate([length/2 + offset,0,0])
-                scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
+            rotate([0,0,a*(360/n)]){
+                translate([offset,0,0]) blade2D(
+                    height = height,        // height
+                    length = length,        // blade length in mm
+                    width = width,          // blade width in mm
+                    thickness = thickness,  // blade thickness in mm
+                    hole_offset = hole_offset    // blade hole offset
+                );
+            }
+
+            cw_ccw_mult = blade_direction * blade_safe_direction;
+            rotate([0,0, (a + cw_ccw_mult) * (360/n)])
+                translate([length/2 + hole_offset + offset,0,0])
+                    scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
+
+        }
     }
 }
+
+
+module blade2D (height, length, width, thickness, hole_offset){
+    difference(){
+        translate([length/2,0,0])
+            scale([1, width/length]) circle(d=length);
+
+        translate([length/2 + hole_offset,0,0])
+            scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
+    }
+}
+
 toroidal_propeller();

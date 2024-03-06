@@ -1,9 +1,9 @@
 # Ultimate Toroidal Propeller Generator
 
-![release](https://badgen.net/github/release/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?icon=github)
-![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)
-![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)
-
+[![release](https://badgen.net/github/release/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?icon=github)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator/releases/latest)
+[![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?tab=GPL-3.0-1-ov-file#readme)
+[![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator/commits/main/)
+[![coffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label)](https://www.buymeacoffee.com/raulbejaraz)
 
 
 The Ultimate Toroidal Propeller Generator is an open source project that provides a way to generate STL files of toroidal drone propellers.
@@ -12,11 +12,15 @@ The Ultimate Toroidal Propeller Generator is an open source project that provide
 |---|---|
 
 
+Help me to maintain this project and 
+<a href="https://www.buymeacoffee.com/raulbejaraz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+
 ## :sparkles: Features
-| ![](./img/multiblade.PNG)  | ![](./img/intersections.PNG) | ![](./img/safe.PNG) | ![](./img/configurable.PNG)  |
+| ![](./img/multiblade.PNG) | ![](./img/safe.PNG) | ![](./img/configurable.PNG) | ![](./img/hub.PNG) |
 |---|---|---|---|
-|  Multi-blade  |  Safe blades intersections  | Safe blade direction | Highly configurable  |
-|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one  | Customize what to do when one blade gets into another | Create the blade that you need in a simple way  |
+|  Multi-blade  |  Safe blades intersections  | Attack angle | Customizable hub |
+|  You can create propellers with as many blades as you want  |  Each blade prevents getting into another one and you can customize what to do when it happens | Specify the attack angle blade that you need in a simple way | Customize that specal hub you want to design |
 
 
 ## :muscle: Getting started
@@ -37,8 +41,10 @@ Let's start by opening the file `example.scad` with OpenSCAD.
 You will see some code but we only are interested in the parameters inside the toroidal definition. Let's change some of them:
   
 This defines a propeller:
-> :warning: Use milimeters
+
 ```
+$fn = 100;                          // how polligonall you want the model
+
 toroidal_propeller(
     blades = 3,                     // number of blades | Default(3)
     height = 6,                     // height | Default(6)
@@ -48,12 +54,12 @@ toroidal_propeller(
     blade_hole_offset = 1.4,        // blade hole offset | Default(1.4)
     blade_attack_angle = 35,        // blade attack angle | Default(35)
     blade_offset = -6,              // blade distance from propeller axis | Default(-6)
-    safe_blades_direction = "PREV", // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
+    blade_safe_direction = "PREV",  // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
     hub_height = 6,                 // Hub height | Default(6)
     hub_d = 16,                     // hub diameter | Default(16)
     hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
     hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
-    hub_notch_diameter = 0          // diameter for the notch | Default(0 = [No support])
+    hub_notch_d = 0                 // diameter for the notch | Default(0 = [No support])
 );
 ```
 
@@ -66,12 +72,12 @@ toroidal_propeller(
 - `blade_hole_offset`: displacement between outer and inner sides of the blades. It shouldn't be greater than thickness.
 - `blade_attack_angle`: this sets how is going to be the attack angle. A positive value will generate a CW propeller and a negative one a CCW.
 - `blade_offset`: blade distance from propeller axis
-- `safe_blades_direction`: indicates if a blade must delete itself from getting into (1) the previous or (2) the next blade.
+- `safe_blades_direction`: indicates if a blade must delete itself from getting into the previous or the next blade.
 - `hub_height`: hub or holder height.
 - `hub_d`: hub or holder diameter.
 - `hub_screw_d`: motor axis screw diameter.
 - `hub_notch_height`: support hole height.
-- `hub_notch_diameter`: support hole diameter.
+- `hub_notch_d`: support hole diameter.
 
 That's all! Render it with this values with OpenSCAD and you will get something similar to this:
 
@@ -82,7 +88,9 @@ Now it's your turn. Play with the parameters and try adding more blades, differe
 
 ## Contributing
 
-Feel free to contribute to this project as much as you want.
+Feel free to contribute to this project as much as you want. Maybe you can start by buying me a coffee. :heart_eyes:
+
+<a href="https://www.buymeacoffee.com/raulbejaraz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 :children_crossing: If you are new contributing we recommend you to start by playing with the core design file [`toroidal_propeller.scad`](./src/toroidal_propeller.scad).
 
