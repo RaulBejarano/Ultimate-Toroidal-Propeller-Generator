@@ -1,5 +1,5 @@
 use <src/toroidal_propeller.scad>
-    $fn = 100;                      // how polligonall you want the model
+$fn = 100;                      // how polligonall you want the model
 
 toroidal_propeller(
     blades = 3,                     // number of blades | Default(3)
