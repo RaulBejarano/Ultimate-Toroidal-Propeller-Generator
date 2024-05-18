@@ -3,17 +3,12 @@
 [![release](https://badgen.net/github/release/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?icon=github)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator/releases/latest)
 [![license](https://badgen.net/github/license/RaulBejarano/Ultimate-Toroidal-Propeller-Generator)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator?tab=GPL-3.0-1-ov-file#readme)
 [![commits](https://badgen.net/github/commits//RaulBejarano/Ultimate-Toroidal-Propeller-Generator/main)](https://github.com/RaulBejarano/Ultimate-Toroidal-Propeller-Generator/commits/main/)
-[![coffee](https://badgen.net/badge/icon/buymeacoffee?icon=buymeacoffee&label)](https://www.buymeacoffee.com/raulbejaraz)
 
 
 The Ultimate Toroidal Propeller Generator is an open source project that provides a way to generate STL files of toroidal drone propellers.
 
 |![3 blades propeller](./img/preview_1.PNG)|![5 blades propeller](./img/preview_2.PNG)|
 |---|---|
-
-
-Help me to maintain this project and 
-<a href="https://www.buymeacoffee.com/raulbejaraz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 
 ## :sparkles: Features
@@ -87,10 +82,6 @@ Now it's your turn. Play with the parameters and try adding more blades, differe
 
 
 ## Contributing
-
-Feel free to contribute to this project as much as you want. Maybe you can start by buying me a coffee. :heart_eyes:
-
-<a href="https://www.buymeacoffee.com/raulbejaraz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 :children_crossing: If you are new contributing we recommend you to start by playing with the core design file [`toroidal_propeller.scad`](./src/toroidal_propeller.scad).
 
