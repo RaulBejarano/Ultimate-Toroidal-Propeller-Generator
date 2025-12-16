@@ -17,9 +17,9 @@ toroidal_propeller(
     trailing_edge_blade_xoffset = 60,   // distancia R2x do path do toroide, porcentagem do valor de blade_length/2
     // perfis NACA:
     profiles=["8412","2412",["ellipse", 0.5],"2412","8412"],      // perfil inicial e final por enquanto
-    profile_pcts=[0,15,50,87,100],                  // tamanho das chords
-    chords=[8,3,2,3,6],
-    chord_pivot_pcts = [0,0,0,0,0],
-    attack_angles=[0,0,0,0,0],            // angulo de ataque
+    profile_pcts=[0,35,50,87,100],                  // tamanho das chords
+    chords=[12,6,2,6,8],
+    chord_pivot_pcts = [25,25,0,50,65],
+    attack_angles=[15,10,-90,0,10],            // angulo de ataque
     path_portion = 1.0
 );

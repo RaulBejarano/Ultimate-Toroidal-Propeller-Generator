@@ -251,3 +251,294 @@ module path_polyline(points, steps, r=0.15){
         }
     }
 }
+
+// ---- Função para calcular o eixo de um frame (X, Y, Z) ----
+function frame_axes_from_tangent(T) =
+    let(
+        Z = vunit(T),
+        up = (abs(Z[2]) < 0.9) ? [0,0,1] : [0,1,0],
+        X = vunit(cross(up, Z)),
+        Y = cross(Z, X)
+    )
+    [X, Y, Z];
+
+// ---- Função para gerar slice 3D a partir dos pontos 2D (perfil) ----
+function slice3d_at_t_from_pts2d(
+    t, pts2d,
+    hub_d, hub_height, blade_length, blade_offset,
+    leadW_pct, trailW_pct, leadX_pct, trailX_pct
+) =
+    let(
+        P = toroidal_path_spline_3d(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct
+        ),
+        T = path_tangent_at_t(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+            dt=1e-3
+        ),
+        axes = frame_axes_from_tangent(T),
+        X = axes[0],
+        Y = axes[1]
+    )
+    [ for(p=pts2d) P + X*p[0] + Y*p[1] ];
+
+
+// ============================================================
+// LOFT leve sem BOSL2: polyhedron conectando slices
+// ============================================================
+
+// retorna N pontos para QUALQUER perfil, garantindo mesmo tamanho
+// - para NACA: naca4_points(code, nseg) gera 2*(nseg+1) pontos
+//   então escolhemos nseg = (N/2)-1  => N precisa ser par e >= 4
+function profile_points_N(profile, N=100) =
+    let(N2 = (N<4)?4:N,
+        Ne = (N2%2==1)? (N2+1) : N2,            // força par
+        nseg = Ne/2 - 1)
+    is_string(profile) ? naca4_points(profile, n=nseg)
+  : (is_list(profile) && profile[0]=="ellipse") ? ellipse_points(profile[1], n=Ne)
+  : naca4_points("0012", n=nseg);
+
+// 2D com chord/pivot/attack (sem módulos)
+function profile_pts2d_N(profile, chord=10, chord_pivot_pct=0, attack_angle=0, N=100) =
+    let(
+        px  = chord_pivot_pct/100,
+        pts = profile_points_N(profile, N=N),
+        pts2 = [ for(p=pts) [ (p[0]-px)*chord, p[1]*chord ] ],
+        ca = cos(attack_angle),
+        sa = sin(attack_angle)
+    )
+    [ for(p=pts2) [ p[0]*ca - p[1]*sa, p[0]*sa + p[1]*ca ] ];
+
+// aplica seus fixes (trailing flip + leading roll 180) em 2D
+function profile_pts2d_fixed(t, path_portion, pts2d) =
+    let(
+        leading = (t < 0.5*path_portion),
+        // trailing_upper_lower_fix
+        ptsA = (!leading) ? [ for(p=pts2d) [ p[0], -p[1] ] ] : pts2d,
+        // leading_roll_180
+        ptsB = (leading) ? [ for(p=ptsA) [ -p[0], -p[1] ] ] : ptsA
+    )
+    ptsB;
+
+// frame (X,Y,Z) igual ao seu orient_profile_perp_with_chord_xy, só que como função
+function frame_axes_from_tangent(T) =
+    let(
+        Z = vunit(T),
+        up = (abs(Z[2]) < 0.9) ? [0,0,1] : [0,1,0],
+        X = vunit(cross(up, Z)),
+        Y = cross(Z, X)
+    )
+    [X, Y, Z];
+
+// slice 3D no t
+function slice3d_at_t(
+    t, profile, chord, chord_pivot_pct, attack_angle,
+    hub_d, hub_height, blade_length, blade_offset,
+    leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+    path_portion=1.0,
+    N=100
+) =
+    let(
+        P = toroidal_path_spline_3d(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct
+        ),
+        T = path_tangent_at_t(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+            dt=1e-3
+        ),
+        axes = frame_axes_from_tangent(T),
+        X = axes[0],
+        Y = axes[1],
+        pts2d0 = profile_pts2d_N(profile, chord, chord_pivot_pct, attack_angle, N=N),
+        pts2d  = profile_pts2d_fixed(t, path_portion, pts2d0)
+    )
+    [ for(p=pts2d) P + X*p[0] + Y*p[1] ];
+
+// concat “manual” (sem depender de len())
+function concat_many(arr, i=0) =
+    is_undef(arr[i]) ? []
+  : concat(arr[i], concat_many(arr, i+1));
+
+// lista de faces entre dois anéis (ring a -> ring b), com N pontos por anel
+function loft_side_faces(N, ringA, ringB) =
+    concat_many([
+        for(j=[0:N-1])
+            let(
+                a = ringA + j,
+                b = ringA + ((j+1)%N),
+                c = ringB + ((j+1)%N),
+                d = ringB + j
+            )
+            // dois triângulos por quad
+            [ [a,b,c], [a,c,d] ]
+    ]);
+
+// tampas (fan) — adiciona 1 ponto centro por tampa e cria triângulos
+function cap_faces(N, center_idx, ring_start, flip=false) =
+    [ for(j=[0:N-1])
+        let(a = ring_start + j,
+            b = ring_start + ((j+1)%N))
+        flip ? [center_idx, b, a] : [center_idx, a, b]
+    ];
+
+// módulo principal: loft das seções definidas em profiles/profile_pcts
+module loft_profiles_on_path_poly(
+    profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
+    hub_d, hub_height, blade_length, blade_offset,
+    leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+    path_portion=1.0,
+    N=100,          // qualidade do contorno por seção (par)
+    caps=true
+){
+    n_profiles = list_size(profiles);
+    Np = (N%2==1) ? (N+1) : N;
+
+    // slices 3D
+    slices = [
+        for(i=[0:n_profiles-1])
+            let(t = (profile_pcts[i]/100) * path_portion)
+            slice3d_at_t(
+                t,
+                profiles[i], chords[i], chord_pivot_pcts[i], attack_angles[i],
+                hub_d, hub_height, blade_length, blade_offset,
+                leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+                path_portion=path_portion,
+                N=Np
+            )
+    ];
+
+    // flatten pontos
+    pts = concat_many(slices);
+
+    // faces laterais
+    faces_side = concat_many([
+        for(i=[0:n_profiles-2])
+            loft_side_faces(Np, i*Np, (i+1)*Np)
+    ]);
+
+    total_pts = n_profiles * Np;
+
+    if (caps) {
+        c0 = ring_center_pts(pts, 0, Np);
+        c1 = ring_center_pts(pts, (n_profiles-1)*Np, Np);
+
+        pts2 = concat(pts, [c0], [c1]);
+        c0i  = total_pts;
+        c1i  = total_pts + 1;
+
+        faces_cap0 = cap_faces(Np, c0i, 0, flip=true);
+        faces_cap1 = cap_faces(Np, c1i, (n_profiles-1)*Np, flip=false);
+
+        polyhedron(
+            points=pts2,
+            faces=concat(faces_side, faces_cap0, faces_cap1),
+            convexity=10
+        );
+    } else {
+        polyhedron(points=pts, faces=faces_side, convexity=10);
+    }
+
+}
+
+// soma vetorial 3D
+function vadd3(a,b) = [a[0]+b[0], a[1]+b[1], a[2]+b[2]];
+
+// ---- Função para calcular o centro de um anel de pontos 3D (média dos pontos) ----
+function ring_center_pts(pts, ring_start, N, k=0, acc=[0,0,0]) =
+    (k >= N) ? [acc[0]/N, acc[1]/N, acc[2]/N]
+             : ring_center_pts(pts, ring_start, N, k+1, vadd3(acc, pts[ring_start+k]));
+
+function lerp(a,b,u) = a + (b-a)*u;
+function lerp2(a,b,u) = [lerp(a[0],b[0],u), lerp(a[1],b[1],u)];
+
+module loft_profiles_on_path_poly_follow(
+    profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
+    hub_d, hub_height, blade_length, blade_offset,
+    leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+    path_portion=1.0,
+    N=80,                 // pontos por seção (par)
+    steps_per_span=12,    // número de slices entre cada par de seções (ajustável)
+    caps=false
+){
+    n_profiles = list_size(profiles);
+    Np = (N%2==1) ? (N+1) : N;
+
+    // Pré-calcula os pts2d de cada perfil “keyframe”
+    key_pts2d = [
+        for(i=[0:n_profiles-1])
+            let(ti = (profile_pcts[i]/100) * path_portion)
+            profile_pts2d_fixed(
+                ti, path_portion,
+                profile_pts2d_N(profiles[i], chords[i], chord_pivot_pcts[i], attack_angles[i], N=Np)
+            )
+    ];
+
+    key_t = [ for(i=[0:n_profiles-1]) (profile_pcts[i]/100) * path_portion ];
+
+    // Gera slices interpolados entre i e i+1
+    slices = concat_many([
+        for(i=[0:n_profiles-2])
+            concat_many([
+                for(s=[0:steps_per_span-1])
+                    let(
+                        u = s/steps_per_span,
+                        t = lerp(key_t[i], key_t[i+1], u),
+                        pts2d_blend = [
+                            for(k=[0:Np-1])
+                                lerp2(key_pts2d[i][k], key_pts2d[i+1][k], u)
+                        ]
+                    )
+                    [ slice3d_at_t_from_pts2d(
+                        t, pts2d_blend,
+                        hub_d, hub_height, blade_length, blade_offset,
+                        leadW_pct, trailW_pct, leadX_pct, trailX_pct
+                    ) ]
+            ])
+    ]);
+
+    // Adiciona a última slice (t final) para fechar o loft
+    slices2 = concat(slices, [
+        slice3d_at_t_from_pts2d(
+            key_t[n_profiles-1], key_pts2d[n_profiles-1],
+            hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct
+        )
+    ]);
+
+    // Flatten pontos
+    pts = concat_many(slices2);
+
+    n_slices = list_size(slices2);
+
+    // Faces laterais
+    faces_side = concat_many([
+        for(i=[0:n_slices-2])
+            loft_side_faces(Np, i*Np, (i+1)*Np)
+    ]);
+
+    // Caps (opcional)
+    if (caps) {
+        total_pts = n_slices * Np;
+        c0 = ring_center_pts(pts, 0, Np);
+        c1 = ring_center_pts(pts, (n_slices-1)*Np, Np);
+
+        pts2 = concat(pts, [c0], [c1]);
+        c0i  = total_pts;
+        c1i  = total_pts + 1;
+
+        faces_cap0 = cap_faces(Np, c0i, 0, flip=true);
+        faces_cap1 = cap_faces(Np, c1i, (n_slices-1)*Np, flip=false);
+
+        polyhedron(
+            points=pts2,
+            faces=concat(faces_side, faces_cap0, faces_cap1),
+            convexity=10
+        );
+    } else {
+        polyhedron(points=pts, faces=faces_side, convexity=10);
+    }
+}

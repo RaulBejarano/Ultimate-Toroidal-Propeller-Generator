@@ -88,35 +88,47 @@ module toroidal_propeller(
 
     path_portion=1.0
 ){
-    // Debug: caminho
-    steps = 120;
-    pts = toroidal_path_points(
-        steps,
-        hub_d, hub_height, blade_length, blade_offset,
-        leading_edge_blade_width, trailing_edge_blade_width,
-        leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
-        0, path_portion
-    );
-    path_polyline(pts, steps, r=0.35);
+    // // Debug: caminho
+    // steps = 120;
+    // pts = toroidal_path_points(
+    //     steps,
+    //     hub_d, hub_height, blade_length, blade_offset,
+    //     leading_edge_blade_width, trailing_edge_blade_width,
+    //     leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
+    //     0, path_portion
+    // );
+    // path_polyline(pts, steps, r=0.35);
 
-    // Perfis ao longo do caminho
-    draw_profiles_on_path_perp(
+    // // Perfis ao longo do caminho
+    // draw_profiles_on_path_perp(
+    //     profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
+    //     hub_d, hub_height, blade_length, blade_offset,
+    //     leading_edge_blade_width, trailing_edge_blade_width,
+    //     leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
+    //     path_portion
+    // );
+
+    loft_profiles_on_path_poly_follow(
         profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
         hub_d, hub_height, blade_length, blade_offset,
         leading_edge_blade_width, trailing_edge_blade_width,
         leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
-        path_portion
+        path_portion=path_portion,
+        N=80,
+        steps_per_span=16,
+        caps=false
     );
 
+
     // Hub hex (se quiser reativar)
-    // difference() {
-    //     union() {
-    //         rotate([0,0,30]) cylinder(d=hub_d, h=hub_height, $fn=6);
-    //     }
-    //     translate([0,0,-eps]) cylinder(d=hub_screw_d, h=hub_height+2*eps);
-    //     if (hub_notch_height>0 && hub_notch_d>0)
-    //         translate([0,0,-eps]) cylinder(d=hub_notch_d, h=hub_notch_height+eps);
-    // }
+    difference() {
+        union() {
+            rotate([0,0,30]) cylinder(d=hub_d, h=hub_height, $fn=6);
+        }
+        translate([0,0,-eps]) cylinder(d=hub_screw_d, h=hub_height+2*eps);
+        if (hub_notch_height>0 && hub_notch_d>0)
+            translate([0,0,-eps]) cylinder(d=hub_notch_d, h=hub_notch_height+eps);
+    }
 }
 
 // teste rápido
