@@ -2,18 +2,24 @@ use <src/toroidal_propeller.scad>
 $fn = 100;                      // how polligonall you want the model
 
 toroidal_propeller(
-    blades = 3,                     // number of blades | Default(3)
-    height = 6,                     // height | Default(6)
-    blade_length = 68,              // blade length | Default(68)
-    blade_width = 42,               // blade width | Default(42)
-    blade_thickness = 4,            // blade thickness | Default(4)
-    blade_hole_offset = 1.4,        // blade hole offset | Default(1.4)
-    blade_attack_angle = 35,        // blade attack angle | Default(35)
-    blade_offset = -6,              // blade distance from propeller axis | Default(-6)
-    blade_safe_direction = "PREV",  // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT) | Default("PREV")
-    hub_height = 6,                 // Hub height | Default(6)
-    hub_d = 16,                     // hub diameter | Default(16)
-    hub_screw_d = 5.5,              // hub screw diameter | Default(5.5)
-    hub_notch_height = 0,           // height for the notch | Default(0 = [No support])
-    hub_notch_d = 0                 // diameter for the notch | Default(0 = [No support])
+    blades = 1,                         // number of blades
+    hub_height = 6,                     // Hub height
+    hub_d = 16,                         // hub diameter (círculo que circunscreve o hexágono)
+    hub_screw_d = 5.5,                  // hub screw diameter
+    hub_notch_height = 0,               // height for the notch 
+    hub_notch_d = 0,                    // diameter for the notch
+    // --- NOVOS PARÂMETROS DE FORMA DO CAMINHO ---
+    blade_length=68,
+    blade_offset = 2,                   // defazagem das laminas em Z
+    leading_edge_blade_width = 18,      // distancia R1 do path do toroide, porcentagem do valor de blade_length/2
+    trailing_edge_blade_width = 18,     // distancia R2 do path do toroide, porcentagem do valor de blade_length/2
+    leading_edge_blade_xoffset = 50,    // distancia R1x do path do toroide, porcentagem do valor de blade_length/2
+    trailing_edge_blade_xoffset = 60,   // distancia R2x do path do toroide, porcentagem do valor de blade_length/2
+    // perfis NACA:
+    profiles=["8412","2412",["ellipse", 0.5],"2412","8412"],      // perfil inicial e final por enquanto
+    profile_pcts=[0,15,50,87,100],                  // tamanho das chords
+    chords=[8,3,2,3,6],
+    chord_pivot_pcts = [0,0,0,0,0],
+    attack_angles=[0,0,0,0,0],            // angulo de ataque
+    path_portion = 1.0
 );

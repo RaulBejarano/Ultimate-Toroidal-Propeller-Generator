@@ -1,84 +1,123 @@
+// ============================================================
+// toroidal_propeller.scad
+// ============================================================
+
 eps=1/128;
-$fn = 100;                          // how polligonall you want the model 
+$fn=100;
 
-module toroidal_propeller(
-    blades = 3,                     // number of blades
-    height = 6,                     // height
-    blade_length = 68,              // blade length in mm
-    blade_width = 42,               // blade width in mm
-    blade_thickness = 4,            // blade thickness in mm
-    blade_hole_offset = 1.4,        // blade hole offset
-    blade_attack_angle = 35,        // blade attack angle
-    blade_offset = -6,              // blade distance from propeller axis
-    blade_safe_direction = "PREV",  // indicates if a blade must delete itself from getting into the previous (PREV) or the next blade (NEXT).
-    hub_height = 6,                 // Hub height
-    hub_d = 16,                     // hub diameter
-    hub_screw_d = 5.5,              // hub screw diameter
-    hub_notch_height = 0,           // height for the notch 
-    hub_notch_d = 0                 // diameter for the notch
+include <helper_functions.scad>;
+include <debug_functions.scad>;
+
+// ============================================================
+// Perfis no caminho, perpendiculares ao caminho,
+// com corda paralela ao plano XY e roll 180 só na leading half.
+// ============================================================
+module draw_profiles_on_path_perp(
+    profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
+    hub_d, hub_height, blade_length, blade_offset,
+    leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+    path_portion=1.0
 ){
-    l = height / tan(blade_attack_angle);
-    p = 2 * PI * blade_length/2;
+    n_profiles = list_size(profiles);
 
-    difference(){
-        union(){
-            linear_extrude(height=height, twist=l/p  * 360, convexity=2){
-                blades2D(
-                    n = blades,
-                    height = height,
-                    length = blade_length,
-                    width = blade_width,
-                    thickness = blade_thickness,
-                    hole_offset = blade_hole_offset,
-                    blade_direction = blade_attack_angle > 0 ? 1 : -1,
-                    offset = blade_offset,
-                    blade_safe_direction = 
-                        blade_safe_direction == "PREV"? 1 : 
-                        blade_safe_direction == "NEXT"? -1: 
-                        0 // default
-                );
-            }
+    for (i=[0:n_profiles-1]) {
 
-            cylinder(d = hub_d, h = hub_height);
-        }
-        translate([0,0,-eps]){
-            cylinder(d = hub_screw_d, h = hub_height + 2*eps);
-            cylinder(d = hub_notch_d, h = hub_notch_height + eps);
-        }
-    }
-}
+        // t do caminho (0..path_portion)
+        t = (profile_pcts[i]/100) * path_portion;
 
-module blades2D(n, height, length, width, thickness, hole_offset, blade_direction, offset, blade_safe_direction){
-    for(a=[0:n-1]){
-        difference(){
-            rotate([0,0,a*(360/n)]){
-                translate([offset,0,0]) blade2D(
-                    height = height,        // height
-                    length = length,        // blade length in mm
-                    width = width,          // blade width in mm
-                    thickness = thickness,  // blade thickness in mm
-                    hole_offset = hole_offset    // blade hole offset
-                );
-            }
+        // posição e tangente
+        P = toroidal_path_spline_3d(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct
+        );
 
-            cw_ccw_mult = blade_direction * blade_safe_direction;
-            rotate([0,0, (a + cw_ccw_mult) * (360/n)])
-                translate([length/2 + hole_offset + offset,0,0])
-                    scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
+        T = path_tangent_at_t(
+            t, hub_d, hub_height, blade_length, blade_offset,
+            leadW_pct, trailW_pct, leadX_pct, trailX_pct,
+            dt=1e-3
+        );
 
-        }
+        // protege contra listas desalinhadas (evita “sumir” perfil)
+        if (
+            !is_undef(profile_pcts[i]) &&
+            !is_undef(chords[i]) &&
+            !is_undef(chord_pivot_pcts[i]) &&
+            !is_undef(attack_angles[i])
+        )
+        translate(P)
+            orient_profile_perp_with_chord_xy(T)
+                trailing_upper_lower_fix(t, path_portion)
+                    leading_roll_180(t, path_portion)
+                        draw_profile2D_as_line(
+                            profiles[i],
+                            chord = chords[i],
+                            chord_pivot_pct = chord_pivot_pcts[i],
+                            attack_angle = attack_angles[i],
+                            n = 90,     // ajuste: 60..120 é comum
+                            r = 0.12    // espessura da linha
+                        );
     }
 }
 
 
-module blade2D (height, length, width, thickness, hole_offset){
-    difference(){
-        translate([length/2,0,0])
-            scale([1, width/length]) circle(d=length);
+// ============================================================
+// Módulo principal
+// ============================================================
+module toroidal_propeller(
+    blades=1,
 
-        translate([length/2 + hole_offset,0,0])
-            scale([1, (width-thickness)/(length-thickness)]) circle(d=length-thickness);
-    }
+    hub_height=6,
+    hub_d=16,
+    hub_screw_d=5.5,
+    hub_notch_height=0,
+    hub_notch_d=0,
+
+    blade_offset=2,
+    blade_length=68,
+
+    leading_edge_blade_width=18,
+    trailing_edge_blade_width=18,
+    leading_edge_blade_xoffset=50,
+    trailing_edge_blade_xoffset=60,
+
+    profiles=["8412",["ellipse",0.5],"2412"],
+    profile_pcts=[0,50,100],
+    chords=[8,2,6],
+    chord_pivot_pcts=[0,0,0],
+    attack_angles=[15,0,-10],
+
+    path_portion=1.0
+){
+    // Debug: caminho
+    steps = 120;
+    pts = toroidal_path_points(
+        steps,
+        hub_d, hub_height, blade_length, blade_offset,
+        leading_edge_blade_width, trailing_edge_blade_width,
+        leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
+        0, path_portion
+    );
+    path_polyline(pts, steps, r=0.35);
+
+    // Perfis ao longo do caminho
+    draw_profiles_on_path_perp(
+        profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
+        hub_d, hub_height, blade_length, blade_offset,
+        leading_edge_blade_width, trailing_edge_blade_width,
+        leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
+        path_portion
+    );
+
+    // Hub hex (se quiser reativar)
+    // difference() {
+    //     union() {
+    //         rotate([0,0,30]) cylinder(d=hub_d, h=hub_height, $fn=6);
+    //     }
+    //     translate([0,0,-eps]) cylinder(d=hub_screw_d, h=hub_height+2*eps);
+    //     if (hub_notch_height>0 && hub_notch_d>0)
+    //         translate([0,0,-eps]) cylinder(d=hub_notch_d, h=hub_notch_height+eps);
+    // }
 }
 
+// teste rápido
 toroidal_propeller();
