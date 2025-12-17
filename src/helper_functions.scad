@@ -54,7 +54,21 @@ function profile_pts2d_fixedN(profile, chord=10, chord_pivot_pct=0, attack_angle
     )
     [ for(p=pts2) [ p[0]*ca - p[1]*sa, p[0]*sa + p[1]*ca ] ];
 
-// Apply your "leading roll 180" + "trailing upper/lower swap" in 2D
+// Applies half-blade orientation corrections to a 2D airfoil profile.
+//
+// The toroidal blade is composed of two halves (leading and trailing)
+// that face opposite directions along the path. To keep the airfoil
+// consistently oriented (upper/lower surfaces and chord direction),
+// different fixes are applied depending on the current path position.
+//
+// - For the trailing half:
+//   The profile is mirrored along the Y axis to swap upper/lower surfaces.
+//
+// - For the leading half:
+//   The profile is rotated 180° in the XY plane to reverse its chord direction.
+//
+// These operations ensure geometric continuity and prevent the profile
+// from appearing flipped or inverted when lofted along the toroidal path.
 function profile_pts2d_apply_half_fixes(t, path_portion, pts2d) =
     let(
         leading = (t < 0.5*path_portion),
@@ -101,7 +115,7 @@ function loft_side_faces(N, ringA, ringB) =
             [ [a,b,c], [a,c,d] ]
     ]);
 
-// Main loft module (no caps)
+// Main loft module
 module loft_profiles_on_path_poly_follow(
     profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
     hub_d, hub_height, blade_length, blade_offset,

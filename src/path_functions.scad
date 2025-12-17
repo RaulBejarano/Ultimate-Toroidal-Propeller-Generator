@@ -26,7 +26,7 @@ function toroidal_path_spline_3d(
         leadX  = blade_length*(leadX_pct/100),
         trailX = blade_length*(trailX_pct/100),
 
-        // Effective radius based on hub diameter (kept from your original logic)
+        // Effective radius based on hub diameter
         r = hub_d*cos(30)/2,
 
         A = [ r*cos(60),    r*sin(60),   hub_height/2 + blade_offset/2 ],

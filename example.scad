@@ -6,7 +6,7 @@ toroidal_propeller(
     // Blade count + rotation
     // -------------------------
     blades = 2,                                                // number of blades (copied/rotated around Z)
-    rotation = "CW",                                           // "CCW" (default) or "CW" (mirrored in YZ plane)
+    rotation = "CCW",                                           // "CCW" (default) or "CW" (mirrored in YZ plane)
 
     // -------------------------
     // Hub geometry
