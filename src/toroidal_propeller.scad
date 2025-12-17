@@ -24,10 +24,10 @@ module toroidal_propeller(
     blade_offset=2,
     blade_length=68,
 
-    leading_edge_blade_width=18,
-    trailing_edge_blade_width=18,
-    leading_edge_blade_xoffset=50,
-    trailing_edge_blade_xoffset=60,
+    leading_blade_width=18,
+    trailing_blade_width=18,
+    leading_blade_xoffset=50,
+    trailing_blade_xoffset=60,
 
     // Profiles (keyframes)
     profiles=["8412",["ellipse",0.5],"2412"],
@@ -50,10 +50,10 @@ module toroidal_propeller(
     //     120,
     //     hub_d, hub_height,
     //     blade_length, blade_offset,
-    //     leading_edge_blade_width,
-    //     trailing_edge_blade_width,
-    //     leading_edge_blade_xoffset,
-    //     trailing_edge_blade_xoffset
+    //     leading_blade_width,
+    //     trailing_blade_width,
+    //     leading_blade_xoffset,
+    //     trailing_blade_xoffset
     // );
 
     // // create line-path
@@ -74,10 +74,10 @@ module toroidal_propeller(
     //     blade_length,
     //     blade_offset,
 
-    //     leading_edge_blade_width,
-    //     trailing_edge_blade_width,
-    //     leading_edge_blade_xoffset,
-    //     trailing_edge_blade_xoffset,
+    //     leading_blade_width,
+    //     trailing_blade_width,
+    //     leading_blade_xoffset,
+    //     trailing_blade_xoffset,
 
     //     path_portion = 1.0,
     //     n = 90,      // resolution of profile
@@ -91,8 +91,8 @@ module toroidal_propeller(
         loft_profiles_on_path_poly_follow(
             profiles, profile_pcts, chords, chord_pivot_pcts, attack_angles,
             hub_d, hub_height, blade_length, blade_offset,
-            leading_edge_blade_width, trailing_edge_blade_width,
-            leading_edge_blade_xoffset, trailing_edge_blade_xoffset,
+            leading_blade_width, trailing_blade_width,
+            leading_blade_xoffset, trailing_blade_xoffset,
             path_portion=path_portion,
             N=loft_profile_points,
             steps_per_span=loft_steps_per_span
