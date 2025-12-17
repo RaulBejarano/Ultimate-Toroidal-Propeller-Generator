@@ -11,7 +11,7 @@ The Ultimate Toroidal Propeller Generator is an open source project that provide
 
 ## ✨ Features
 
-| ![n_blades](./img/multiblade.PNG)                                 | ![rotation](./img/ccw_cw.PNG)                                    | ![attack_angle](./img/attack_angle.PNG)                                     | ![hub](./img/hub.PNG)                                           |
+| ![n_blades](./img/multiblade.PNG)                                 | ![rotation](./img/ccw_cw.png)                                    | ![attack_angle](./img/attack_angle.png)                                     | ![hub](./img/hub.PNG)                                           |
 | ---------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
 | Multi-blade                                                | Configurable propeller rotation: CW or CCW                | Attack angle                                                     | Customizable hub                                              |
 | Design propellers with the exact number of blades you need | Specify rotation based on your specific application needs | Define the required blade attack angle in a clear and simple way | Design and customize the hub according to your specific needs |
@@ -120,7 +120,7 @@ The **X axis** is the blade-length direction and the **Y axis** controls the lat
 
 All points are defined in 3D, but the path shape is governed by their **XY projection**.
 
-![hub](./img/path_toroidal_propeller.PNG) 
+![hub](./img/path_toroidal_propeller.png) 
 
 
 `r = hub_d · cos(30°) / 2`
